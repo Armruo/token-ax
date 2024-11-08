@@ -1,0 +1,9 @@
+{
+    "rust-analyzer.cargo.features": "all",
+    "rust-analyzer.checkOnSave.extraArgs": [
+        "--target-dir",
+        "target/types"
+    ],
+    "rust-analyzer.cargo.target": "bpfel-unknown-unknown",
+    "rust-analyzer.checkOnSave.allTargets": false
+} 
