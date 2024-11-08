@@ -8,28 +8,7 @@ declare_id!("AsjZ3kWAUSQRNt2pZVeJkywhZ6gpLpHZmJjduPmKZDZZ");
 pub mod tokenvesting {
     use super::*;
 
-  pub fn close(_ctx: Context<CloseTokenvesting>) -> Result<()> {
-    Ok(())
-  }
-
-  pub fn decrement(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.tokenvesting.count = ctx.accounts.tokenvesting.count.checked_sub(1).unwrap();
-    Ok(())
-  }
-
-  pub fn increment(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.tokenvesting.count = ctx.accounts.tokenvesting.count.checked_add(1).unwrap();
-    Ok(())
-  }
-
-  pub fn initialize(_ctx: Context<InitializeTokenvesting>) -> Result<()> {
-    Ok(())
-  }
-
-  pub fn set(ctx: Context<Update>, value: u8) -> Result<()> {
-    ctx.accounts.tokenvesting.count = value.clone();
-    Ok(())
-  }
+  
 }
 
 #[derive(Accounts)]
