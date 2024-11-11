@@ -10,6 +10,8 @@ import { Tokenvesting } from "../target/types/tokenvesting";
 import { SYSTEM_PROGRAM_ID } from "@coral-xyz/anchor/dist/cjs/native/system";
 import { BankrunProvider } from "anchor-bankrun";
 import { Program } from "@coral-xyz/anchor";
+import { createMint } from "spl-token-bankrun";
+
 
 describe("Vesting Smart Contract Tests", () => {
          let beneficiary: Keypair;
@@ -18,6 +20,7 @@ describe("Vesting Smart Contract Tests", () => {
          let program: Program<Tokenvesting>;
          let banksClient: BanksClient;
          let employer: Keypair;
+         let mint: PublicKey;
 
          beforeAll(async () => {
                   beneficiary = new anchor.web3.Keypair();
@@ -45,6 +48,9 @@ describe("Vesting Smart Contract Tests", () => {
                   banksClient = context.banksClient;
 
                   employer = provider.wallet.payer;
+                  
+                  // @ts-ignore
+                  mint = await createMint(banksClient, employer, employer.publicKey, null, 2);
 
          })
 })
