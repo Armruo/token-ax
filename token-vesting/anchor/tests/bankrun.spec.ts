@@ -15,6 +15,7 @@ import NodeWallet from "@coral-xyz/anchor/dist/cjs/nodewallet";
 
 
 describe("Vesting Smart Contract Tests", () => {
+         const companyName = "Company";
          let beneficiary: Keypair;
          let context: ProgramTestContext;  // 测试上下文
          let provider: BankrunProvider;
@@ -24,6 +25,9 @@ describe("Vesting Smart Contract Tests", () => {
          let mint: PublicKey;
          let beneficiaryProvider: BankrunProvider;
          let program2: Program<Tokenvesting>;
+         let vestingAccountKey: PublicKey;
+         let treasuryTokenAccount: PublicKey;
+         let employeeAccount: PublicKey;
 
          beforeAll(async () => {
                   beneficiary = new anchor.web3.Keypair();
@@ -60,6 +64,24 @@ describe("Vesting Smart Contract Tests", () => {
 
                   program2 = new Program<Tokenvesting>(IDL as Tokenvesting, beneficiaryProvider);
 
+                  [vestingAccountKey] = PublicKey.findProgramAddressSync(
+                           [Buffer.from(companyName)],
+                           program.programId
+                  );
+                  
+                  [treasuryTokenAccount] = PublicKey.findProgramAddressSync(
+                           [Buffer.from("vesting_treasury"), Buffer.from(companyName)],
+                           program.programId
+                  );
+                  
+                  [employeeAccount] = PublicKey.findProgramAddressSync(
+                           [
+                                    Buffer.from("employee_vesting"),
+                                    beneficiary.publicKey.toBuffer(),
+                                    vestingAccountKey.toBuffer(),
+                           ],
+                           program.programId
+                  );
 
          })
 })
