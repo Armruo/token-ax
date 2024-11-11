@@ -10,6 +10,7 @@ declare_id!("AsjZ3kWAUSQRNt2pZVeJkywhZ6gpLpHZmJjduPmKZDZZ");
 pub mod tokenvesting {
     use super::*;
 
+    
     pub fn create_vesting_account(ctx: Context<CreateVestingAccount>, company_name: String) -> Result<()> {
       
       *ctx.accounts.vesting_account = VestingAccount {
@@ -23,6 +24,7 @@ pub mod tokenvesting {
 
       Ok(()) 
     }
+
 
     pub fn create_employee_account(
       ctx: Context<CreateEmployeeAccount>,
@@ -44,6 +46,7 @@ pub mod tokenvesting {
 
       Ok(())
     }
+
 
     pub fn claim_tokens(ctx: Context<ClaimTokens>) -> Result<()> {
       let employee_account = &mut ctx.accounts.employee_account;
@@ -114,7 +117,7 @@ pub struct CreateVestingAccount<'info> {
     bump
   )]
   pub vesting_account: Account<'info, VestingAccount>,
-  pub mint: InterfaceAccount<'info, Mint>
+  pub mint: InterfaceAccount<'info, Mint>,
   #[account(
     init,
     token::mint = mint,
@@ -174,6 +177,7 @@ pub struct EmployeeAccount {
 
 
 #[derive(Accounts)]
+#[instruction(company_name: String)]
 pub struct ClaimTokens<'info> {
   #[account(mut)]
   pub beneficiary: Signer<'info>,
@@ -182,32 +186,28 @@ pub struct ClaimTokens<'info> {
     seeds = [b"employee_vesting", beneficiary.key().as_ref(), vesting_account.key().as_ref()],
     bump = employee_account.bump,
     has_one = beneficiary,
-    has_one = vesting_account,
+    has_one = vesting_account
   )]
   pub employee_account: Account<'info, EmployeeAccount>,
-
   #[account(
     mut,
     seeds = [company_name.as_ref()],
-    bump = vesting_account.treasury_bump,
+    bump = vesting_account.bump,
     has_one = treasury_token_account,
-    has_one = mint,
+    has_one = mint
   )]
-  pub vesting_treasury: InterfaceAccount<'info, TokenAccount>,
-
+  pub vesting_account: Account<'info, VestingAccount>,
   pub mint: InterfaceAccount<'info, Mint>,
   #[account(mut)]
   pub treasury_token_account: InterfaceAccount<'info, TokenAccount>,
-
   #[account(
     init_if_needed,
     payer = beneficiary,
     associated_token::mint = mint,
     associated_token::authority = beneficiary,
-    associated_token::token_program = token_program,
+    associated_token::token_program = token_program
   )]
   pub employee_token_account: InterfaceAccount<'info, TokenAccount>,
-
   pub token_program: Interface<'info, TokenInterface>,
   pub associated_token_program: Program<'info, AssociatedToken>,
   pub system_program: Program<'info, System>,
