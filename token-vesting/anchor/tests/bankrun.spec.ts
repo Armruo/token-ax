@@ -11,6 +11,7 @@ import { SYSTEM_PROGRAM_ID } from "@coral-xyz/anchor/dist/cjs/native/system";
 import { BankrunProvider } from "anchor-bankrun";
 import { Program } from "@coral-xyz/anchor";
 import { createMint } from "spl-token-bankrun";
+import NodeWallet from "@coral-xyz/anchor/dist/cjs/nodewallet";
 
 
 describe("Vesting Smart Contract Tests", () => {
@@ -21,6 +22,8 @@ describe("Vesting Smart Contract Tests", () => {
          let banksClient: BanksClient;
          let employer: Keypair;
          let mint: PublicKey;
+         let beneficiaryProvider: BankrunProvider;
+         let program2: Program<Tokenvesting>;
 
          beforeAll(async () => {
                   beneficiary = new anchor.web3.Keypair();
@@ -51,6 +54,12 @@ describe("Vesting Smart Contract Tests", () => {
                   
                   // @ts-ignore
                   mint = await createMint(banksClient, employer, employer.publicKey, null, 2);
+
+                  beneficiaryProvider = new BankrunProvider(context);
+                  beneficiaryProvider.wallet = new NodeWallet(beneficiary);
+
+                  program2 = new Program<Tokenvesting>(IDL as Tokenvesting, beneficiaryProvider);
+
 
          })
 })
