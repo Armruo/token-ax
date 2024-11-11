@@ -3,6 +3,7 @@ import { PublicKey, Keypair } from "@solana/web3.js";
 import {
          ProgramTestContext,
          startAnchor,
+         BanksClient,
 } from "solana-bankrun";
 import IDL from "../target/idl/tokenvesting.json";
 import { Tokenvesting } from "../target/types/tokenvesting";
@@ -15,6 +16,8 @@ describe("Vesting Smart Contract Tests", () => {
          let context: ProgramTestContext;  // 测试上下文
          let provider: BankrunProvider;
          let program: Program<Tokenvesting>;
+         let banksClient: BanksClient;
+         let employer: Keypair;
 
          beforeAll(async () => {
                   beneficiary = new anchor.web3.Keypair();
@@ -38,6 +41,10 @@ describe("Vesting Smart Contract Tests", () => {
 
                   anchor.setProvider(provider);
                   program = new Program<Tokenvesting>(IDL as Tokenvesting, provider);
+
+                  banksClient = context.banksClient;
+
+                  employer = provider.wallet.payer;
 
          })
 })
