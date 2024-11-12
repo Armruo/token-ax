@@ -83,5 +83,27 @@ describe("Vesting Smart Contract Tests", () => {
                   );
          });
 
+         it("should create a vesting account", async () => {
+                  const tx = await program.methods
+                           .createVestingAccount(companyName)
+                           .accounts({
+                                    signer: employer.publicKey,
+                                    mint,
+                                    tokenProgram: TOKEN_PROGRAM_ID,
+                           })
+                           .rpc({ commitment: "confirmed" });
+              
+                  const vestingAccountData = await program.account.vestingAccount.fetch(
+                           vestingAccountKey,
+                           "confirmed"
+                  );
+                  console.log(
+                           "Vesting Account Data:",
+                           JSON.stringify(vestingAccountData, null, 2)
+                  );
+              
+                  console.log("Create Vesting Account Transaction Signature:", tx);
+         });
+
 
 })
