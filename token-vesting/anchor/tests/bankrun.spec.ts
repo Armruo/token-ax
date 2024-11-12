@@ -4,12 +4,13 @@ import {
          ProgramTestContext,
          startAnchor,
          BanksClient,
+         Clock,
 } from "solana-bankrun";
 import IDL from "../target/idl/tokenvesting.json";
 import { Tokenvesting } from "../target/types/tokenvesting";
 import { SYSTEM_PROGRAM_ID } from "@coral-xyz/anchor/dist/cjs/native/system";
 import { BankrunProvider } from "anchor-bankrun";
-import { Program } from "@coral-xyz/anchor";
+import { BN, Program } from "@coral-xyz/anchor";
 import { createMint, mintTo } from "spl-token-bankrun";
 import NodeWallet from "@coral-xyz/anchor/dist/cjs/nodewallet";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
@@ -84,6 +85,7 @@ describe("Vesting Smart Contract Tests", () => {
                   );
          });
 
+
          it("should create a vesting account", async () => {
                   const tx = await program.methods
                            .createVestingAccount(companyName)
@@ -119,6 +121,45 @@ describe("Vesting Smart Contract Tests", () => {
                   );
               
                   console.log("Mint to Treasury Transaction Signature:", mintTx);
+         });
+
+         it("should create an employee vesting account", async () => {
+                  const tx2 = await program.methods
+                           .createEmployeeAccount(new BN(0), new BN(100), new BN(100), new BN(0))
+                           .accounts({
+                                    beneficiary: beneficiary.publicKey,
+                                    vestingAccount: vestingAccountKey,
+                           })
+                           .rpc({ commitment: "confirmed", skipPreflight: true });
+              
+                  console.log("Create Employee Account Transaction Signature:", tx2);
+                  console.log("Employee account", employeeAccount.toBase58());
+         });
+
+         it("should claim tokens", async () => {
+                  await new Promise((resolve) => setTimeout(resolve, 1000));
+              
+                  const currentClock = await banksClient.getClock();
+                  context.setClock(
+                           new Clock(
+                                    currentClock.slot,
+                                    currentClock.epochStartTimestamp,
+                                    currentClock.epoch,
+                                    currentClock.leaderScheduleEpoch,
+                                    BigInt(1000)
+                           )
+                  );
+              
+                  console.log("Employee account", employeeAccount.toBase58());
+              
+                  const tx3 = await program2.methods
+                           .claimTokens(companyName)
+                           .accounts({
+                                    tokenProgram: TOKEN_PROGRAM_ID,
+                           })
+                           .rpc({ commitment: "confirmed" });
+              
+                  console.log("Claim Tokens transaction signature", tx3);
          });
 
 
