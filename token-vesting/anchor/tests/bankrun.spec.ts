@@ -29,10 +29,10 @@ describe("Vesting Smart Contract Tests", () => {
          let treasuryTokenAccount: PublicKey;
          let employeeAccount: PublicKey;
 
+         // 测试初始化
          beforeAll(async () => {
                   beneficiary = new anchor.web3.Keypair();
 
-                  // 启动测试环境
                   context = await startAnchor(
                            "",
                            [{ name: "vesting", programId: new PublicKey(IDL.address) }],
@@ -49,11 +49,12 @@ describe("Vesting Smart Contract Tests", () => {
                            ]
                   );
 
+                  provider = new BankrunProvider(context);
                   anchor.setProvider(provider);
+                   
                   program = new Program<Tokenvesting>(IDL as Tokenvesting, provider);
 
                   banksClient = context.banksClient;
-
                   employer = provider.wallet.payer;
                   
                   // @ts-ignore
@@ -68,12 +69,10 @@ describe("Vesting Smart Contract Tests", () => {
                            [Buffer.from(companyName)],
                            program.programId
                   );
-                  
                   [treasuryTokenAccount] = PublicKey.findProgramAddressSync(
                            [Buffer.from("vesting_treasury"), Buffer.from(companyName)],
                            program.programId
                   );
-                  
                   [employeeAccount] = PublicKey.findProgramAddressSync(
                            [
                                     Buffer.from("employee_vesting"),
@@ -82,6 +81,7 @@ describe("Vesting Smart Contract Tests", () => {
                            ],
                            program.programId
                   );
+         });
 
-         })
+
 })
