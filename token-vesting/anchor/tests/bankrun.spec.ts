@@ -10,8 +10,9 @@ import { Tokenvesting } from "../target/types/tokenvesting";
 import { SYSTEM_PROGRAM_ID } from "@coral-xyz/anchor/dist/cjs/native/system";
 import { BankrunProvider } from "anchor-bankrun";
 import { Program } from "@coral-xyz/anchor";
-import { createMint } from "spl-token-bankrun";
+import { createMint, mintTo } from "spl-token-bankrun";
 import NodeWallet from "@coral-xyz/anchor/dist/cjs/nodewallet";
+import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
 
 describe("Vesting Smart Contract Tests", () => {
@@ -97,12 +98,27 @@ describe("Vesting Smart Contract Tests", () => {
                            vestingAccountKey,
                            "confirmed"
                   );
+
                   console.log(
                            "Vesting Account Data:",
                            JSON.stringify(vestingAccountData, null, 2)
                   );
-              
                   console.log("Create Vesting Account Transaction Signature:", tx);
+         });
+
+         it("should fund the treasury token account", async () => {
+                  const amount = 10_000 * 10 ** 9;
+                  const mintTx = await mintTo(
+                           // @ts-ignores
+                           banksClient,
+                           employer,
+                           mint,
+                           treasuryTokenAccount,
+                           employer,
+                           amount
+                  );
+              
+                  console.log("Mint to Treasury Transaction Signature:", mintTx);
          });
 
 
