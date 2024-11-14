@@ -108,6 +108,7 @@ describe("Vesting Smart Contract Tests", () => {
                   console.log("Create Vesting Account Transaction Signature:", tx);
          });
 
+
          it("should fund the treasury token account", async () => {
                   const amount = 10_000 * 10 ** 9;
                   const mintTx = await mintTo(
@@ -123,6 +124,7 @@ describe("Vesting Smart Contract Tests", () => {
                   console.log("Mint to Treasury Transaction Signature:", mintTx);
          });
 
+
          it("should create an employee vesting account", async () => {
                   const tx2 = await program.methods
                            .createEmployeeAccount(new BN(0), new BN(100), new BN(100), new BN(0))
@@ -136,6 +138,7 @@ describe("Vesting Smart Contract Tests", () => {
                   console.log("Employee account", employeeAccount.toBase58());
          });
 
+         
          it("should claim tokens", async () => {
                   await new Promise((resolve) => setTimeout(resolve, 1000));
               
